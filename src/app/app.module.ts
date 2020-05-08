@@ -8,12 +8,14 @@ import { BookListComponent } from './book-list/book-list.component';
 import { BookDetailComponent } from './book-detail/book-detail.component';
 import { BookCatalogueService } from './book-catalogue.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CreateBookComponent } from './create-book/create-book.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BookListComponent,
-    BookDetailComponent
+    BookDetailComponent,
+    CreateBookComponent
   ],
   imports: [
     BrowserModule,
