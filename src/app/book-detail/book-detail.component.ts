@@ -33,7 +33,7 @@ export class BookDetailComponent implements OnInit {
   }
 
   getBook() {
-    const id = +this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get('id');
     this.bookCatalogueService.getBook(id)
       .subscribe(book => {
         this.book =  book;
