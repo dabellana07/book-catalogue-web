@@ -13,8 +13,36 @@ export class BookCatalogueService {
 
   constructor(private http: HttpClient) { }
 
-  getBooks(): Observable<Book[]> {
-    return this.http.get<Book[]>(this.apiUrl + '/search')
+  getBooks(
+    searchTerm?: string,
+    genre?: string,
+    dateFrom?: string,
+    dateTo?: string
+  ): Observable<Book[]> {
+    let params: Map<string, string> = new Map();
+
+    if (searchTerm) {
+      params.set('term', searchTerm);
+    }
+
+    if (genre) {
+      params.set('genre', genre);
+    }
+
+    if (dateFrom) {
+      params.set('startDate', dateFrom);
+    }
+
+    if (dateTo) {
+      params.set('endDate', dateTo);
+    }
+
+    const queryUrl = this.apiUrl + '/search' + 
+      (params.size > 0 ? this.constructQueryParameters(params) : '');
+
+    console.log(queryUrl);
+
+    return this.http.get<Book[]>(queryUrl)
       .pipe(catchError(this.handleError));
   }
 
@@ -26,6 +54,19 @@ export class BookCatalogueService {
   addBook(book: Book) {
     return this.http.post(this.apiUrl, book)
       .pipe(catchError(this.handleError));
+  }
+
+  private constructQueryParameters(queries: Map<string, string>): string {
+    let queryString = '';
+    let queryParamsCount = 0;
+
+    for(const key of queries.keys()) {
+      queryParamsCount++;
+      queryString += (queryParamsCount > 1 ? '&' : '?') +
+        `${key}=${queries.get(key)}`;
+    }
+
+    return queryString;
   }
 
   private handleError(error: HttpErrorResponse) {

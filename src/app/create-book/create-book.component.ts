@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 import { BookCatalogueService } from '../book-catalogue.service';
 
 @Component({
@@ -13,16 +14,21 @@ export class CreateBookComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private formBuilder: FormBuilder,
     private bookCatalogueService: BookCatalogueService
-  ) { 
+  ) {
+    let dp = new DatePipe(navigator.language);
+    let p = 'y-MM-dd'; // YYYY-MM-DD
+    let dtr = dp.transform(new Date(), p);
+
     this.createForm = this.formBuilder.group({
       title: '',
       description: '',
       author: '',
       genre: '',
       publisher: '',
-      publishDate: new Date()
+      publishDate: dtr
     });
   }
 
@@ -31,7 +37,16 @@ export class CreateBookComponent implements OnInit {
 
   onSubmit(bookData) {
     console.log(bookData);
-    this.bookCatalogueService.addBook(bookData).subscribe();
+    this.bookCatalogueService.addBook(bookData)
+      .subscribe(
+        result => { },
+        error => {
+          console.log(error);
+        },
+        () => {
+          this.router.navigate(['']);
+        }
+      );
   }
 
 }
