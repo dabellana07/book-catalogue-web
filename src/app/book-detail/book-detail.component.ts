@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 import { BookCatalogueService } from '../book-catalogue.service';
 import { Book } from '../models/book';
 
@@ -17,7 +18,7 @@ export class BookDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private bookCatalogueService: BookCatalogueService
-  ) { 
+  ) {
     this.updateForm = this.formBuilder.group({
       title: '',
       description: '',
@@ -36,13 +37,17 @@ export class BookDetailComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     this.bookCatalogueService.getBook(id)
       .subscribe(book => {
-        this.book =  book;
+        this.book = book;
+        let dp = new DatePipe(navigator.language);
+        let p = 'y-MM-dd'; // YYYY-MM-DD
+        let dtr = dp.transform(book.publishDate, p);
+
         this.updateForm.get('title').setValue(book.title);
         this.updateForm.get('description').setValue(book.description);
         this.updateForm.get('author').setValue(book.author);
         this.updateForm.get('genre').setValue(book.genre);
         this.updateForm.get('publisher').setValue(book.publisher);
-        this.updateForm.get('publishDate').setValue(book.publishDate);
+        this.updateForm.get('publishDate').setValue(dtr);
       });
   }
 
